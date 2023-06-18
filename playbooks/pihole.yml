@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: yes
+  become_user: "root"
+  tasks:
+    
+  - name: Check pihole-data Volume
+    community.docker.docker_volume:
+      name: pihole-data
+      state: present
+
+  - name: Check pihole-dns Volume
+    community.docker.docker_volume:
+      name: pihole-dns
+      state: present
+
+  - name: copy DNS config files
+    copy:
+      src: ../enviroments/dns/
+      dest: /var/lib/docker/volumes/pihole-dns/_data
+
+  - name: Deploy/restart pihole
+    community.docker.docker_container:
+      name: pihole
+      image: "docker.io/cbcrowe/pihole-unbound"
+      hostname: hole
+      domainname: hole
+      state: started
+      ports:
+        - "53:53/udp"
+        - "53:53/tcp"
+        - "8000:80/tcp"
+      env:
+        FTLCONF_LOCAL_IPV4: 0.0.0.0
+        TZ: America/Boise
+        WEBPASSWORD: pihole
+        WEBTHEME: ${WEBTHEME:-default-dark}
+        REV_SERVER_TARGET: 10.0.0.1
+        REV_SERVER_CIDR: 10.0.0.0/24
+        PIHOLE_DNS_: 127.0.0.1#5335
+        DNSSEC: "true"
+        DNSMASQ_LISTENING: single
+      volumes:
+        - pihole-dns:/etc/dnsmasq.d
+        - pihole-data:/etc/pihole
+      restart: true
+      restart_policy: always

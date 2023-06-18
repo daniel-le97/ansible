@@ -1,0 +1,42 @@
+- hosts: proxmox
+  become: yes
+  vars:
+    machine: cat
+    new_machine_id: 8888
+    secret_pass: bobby!1
+    ip: ip=10.0.0.31
+    router: gw=10.0.0.1
+  tasks:
+    - name: Create vm id "{{ new_machine_id }}, {{ machine }}"
+      community.general.proxmox_kvm:
+        node: pve
+        api_user: root@pam
+        api_password: "{{ secret_pass }}"
+        api_host: pve
+        name: "{{ machine }}"
+        newid: "{{ new_machine_id }}"
+        clone: ubuntu-20gb
+        storage: nvme
+        format: raw
+        timeout: 300
+        
+    - name: update vm "{{ new_machine_id }} , {{ machine }}"
+      community.general.proxmox_kvm:
+        node: pve
+        api_user: root@pam
+        api_password: "{{ secret_pass }}"
+        api_host: pve
+        name: "{{ machine }}"
+        ipconfig:
+          ipconfig0: '{{ ip }}/24,{{ router }}'
+        update: true
+
+    - name: Start container
+      community.general.proxmox_kvm:
+        vmid: "{{ new_machine_id }}"
+        api_user: root@pam
+        api_password: "{{ secret_pass }}"
+        api_host: pve
+        state: started
+
+        
