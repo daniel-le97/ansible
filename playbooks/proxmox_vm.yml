@@ -1,7 +1,5 @@
 - hosts: proxmox
   become: yes
-  vars_files:
-    - ../variables/proxmox_kvm.yml
   tasks:
     - name: Create vm id "{{ new_machine_id }}, {{ machine }}"
       community.general.proxmox_kvm:
