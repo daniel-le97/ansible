@@ -5,23 +5,23 @@
   tasks:
     - name: Create vm id "{{ new_machine_id }}, {{ machine }}"
       community.general.proxmox_kvm:
-        node: "{{ prox_node }}"
+        node: pve
         api_user: "{{ prox_user }}"
         api_password: "{{ prox_pass }}"
-        api_host: "{{ prox_node }}"
+        api_host: pve
         name: "{{ machine }}"
         newid: "{{ new_machine_id }}"
-        clone: "{{ clone }}"
-        storage: "{{ storage }}"
+        clone: ubuntu-20gb
+        storage: nvme
         format: raw
         timeout: 300
         
     - name: update vm "{{ new_machine_id }} , {{ machine }}"
       community.general.proxmox_kvm:
-        node: "{{ prox_node }}"
+        node: pve
         api_user: "{{ prox_user }}"
         api_password: "{{ prox_pass }}"
-        api_host: "{{ prox_node }}"
+        api_host: pve
         name: "{{ machine }}"
         ipconfig:
           ipconfig0: '{{ ip }}/24,{{ router }}'
@@ -32,7 +32,7 @@
         vmid: "{{ new_machine_id }}"
         api_user: "{{ prox_user }}"
         api_password: "{{ prox_pass }}"
-        api_host: "{{ prox_node }}"
+        api_host: pve
         state: "{{ state }}"
 
 
