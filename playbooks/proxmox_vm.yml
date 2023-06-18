@@ -1,11 +1,5 @@
 - hosts: proxmox
   become: yes
-  vars:
-    machine: cat
-    new_machine_id: 8888
-    secret_pass: bobby!1
-    ip: ip=10.0.0.31
-    router: gw=10.0.0.1
   tasks:
     - name: Create vm id "{{ new_machine_id }}, {{ machine }}"
       community.general.proxmox_kvm:
