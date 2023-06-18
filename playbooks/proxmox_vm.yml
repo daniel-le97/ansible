@@ -1,25 +1,27 @@
 - hosts: proxmox
   become: yes
+  vars_files:
+    - ../variables/proxmox_kvm.yml
   tasks:
     - name: Create vm id "{{ new_machine_id }}, {{ machine }}"
       community.general.proxmox_kvm:
-        node: pve
-        api_user: root@pam
-        api_password: "{{ secret_pass }}"
-        api_host: pve
+        node: "{{ prox_node }}"
+        api_user: "{{ prox_user }}"
+        api_password: "{{ prox_pass }}"
+        api_host: "{{ prox_node }}"
         name: "{{ machine }}"
         newid: "{{ new_machine_id }}"
-        clone: ubuntu-20gb
-        storage: nvme
+        clone: "{{ clone }}"
+        storage: "{{ storage }}"
         format: raw
         timeout: 300
         
     - name: update vm "{{ new_machine_id }} , {{ machine }}"
       community.general.proxmox_kvm:
-        node: pve
-        api_user: root@pam
-        api_password: "{{ secret_pass }}"
-        api_host: pve
+        node: "{{ prox_node }}"
+        api_user: "{{ prox_user }}"
+        api_password: "{{ prox_pass }}"
+        api_host: "{{ prox_node }}"
         name: "{{ machine }}"
         ipconfig:
           ipconfig0: '{{ ip }}/24,{{ router }}'
@@ -28,9 +30,9 @@
     - name: Start container
       community.general.proxmox_kvm:
         vmid: "{{ new_machine_id }}"
-        api_user: root@pam
-        api_password: "{{ secret_pass }}"
-        api_host: pve
-        state: started
+        api_user: "{{ prox_user }}"
+        api_password: "{{ prox_pass }}"
+        api_host: "{{ prox_node }}"
+        state: "{{ state }}"
 
         
