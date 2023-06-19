@@ -1,0 +1,25 @@
+- hosts: all
+  become: yes
+  tasks:
+    - name: uninstall Docker SDK
+      pip:
+        name:
+          - docker
+          - docker-compose
+        state: absent
+
+    - name: uninstall Docker
+      apt:
+        name: docker.io
+        state: absent
+
+    - name: remove user permissions
+      shell: "gpasswd --delete root docker"
+
+    - name: Reset ssh connection for changes to take effect
+      meta: "reset_connection"
+
+    - name: uninstall python package manager
+      apt:
+        name: python3-pip
+        state: absent
