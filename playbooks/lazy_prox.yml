@@ -44,9 +44,9 @@
     - name: debug
       debug:
         var: nmap.stdout_lines
-    - name: Execute node script
+    - name: Execute bun script
       command:
-        cmd: node get-vm/test.js "{{ stuff.stdout }}" "{{ nmap.stdout_lines | join('##')}}"
+        cmd: bun get-vm/test.js "{{ stuff.stdout }}" "{{ nmap.stdout_lines | join('##')}}"
       register: script_output
     - name: Display script output
       debug:
